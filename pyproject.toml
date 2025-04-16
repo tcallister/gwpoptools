@@ -1,0 +1,14 @@
+# contents of pyproject.toml
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gwpoptools"
+version = "0.1.0"
+dependencies = [
+  "numpy>=2.2.4",
+  "numpyro>=0.18.0",
+  "scipy>=1.15.2",
+  "jax>=0.5.3",
+]
