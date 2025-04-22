@@ -335,9 +335,9 @@ def primaryMassModel_brokenPL_twoPeaks_independentBetas(
     p_m1_peak2 = jnp.exp(-(m1-mu_m2)**2/(2.*sig_m2**2))/jnp.sqrt(2.*np.pi*sig_m2**2)
 
     # Mass ratio distributions in each component
-    p_q_peak1 = massRatioModel_O4A(q, m1, beta_peak1, m2_low_peak1, delta_m2_peak1)
-    p_q_peak2 = massRatioModel_O4A(q, m1, beta_peak2, m2_low_peak2, delta_m2_peak2)
-    p_q_pl = massRatioModel_O4A(q, m1, beta_pl, m2_low_pl, delta_m2_pl)
+    p_q_peak1 = massRatioModel_taperedPowerLaw(q, m1, beta_peak1, m2_low_peak1, delta_m2_peak1)
+    p_q_peak2 = massRatioModel_taperedPowerLaw(q, m1, beta_peak2, m2_low_peak2, delta_m2_peak2)
+    p_q_pl = massRatioModel_taperedPowerLaw(q, m1, beta_pl, m2_low_pl, delta_m2_pl)
 
     # Normalize
     if cached_normalization_data is None:
@@ -346,9 +346,9 @@ def primaryMassModel_brokenPL_twoPeaks_independentBetas(
         q_grid = jnp.linspace(1e-3, 1, 199)
         M_GRID, Q_GRID = jnp.meshgrid(m_grid, q_grid)
 
-        F_Q_peak1 = massRatioModel_O4A(Q_GRID, M_GRID, beta_peak1, m2_low_peak1, delta_m2_peak1)
-        F_Q_peak2 = massRatioModel_O4A(Q_GRID, M_GRID, beta_peak2, m2_low_peak2, delta_m2_peak2)
-        F_Q_pl = massRatioModel_O4A(Q_GRID, M_GRID, beta_pl, m2_low_pl, delta_m2_pl)
+        F_Q_peak1 = massRatioModel_taperedPowerLaw(Q_GRID, M_GRID, beta_peak1, m2_low_peak1, delta_m2_peak1)
+        F_Q_peak2 = massRatioModel_taperedPowerLaw(Q_GRID, M_GRID, beta_peak2, m2_low_peak2, delta_m2_peak2)
+        F_Q_pl = massRatioModel_taperedPowerLaw(Q_GRID, M_GRID, beta_pl, m2_low_pl, delta_m2_pl)
         f_q_peak1_norms = jnp.trapezoid(F_Q_peak1, q_grid, axis=0)
         f_q_peak2_norms = jnp.trapezoid(F_Q_peak2, q_grid, axis=0)
         f_q_pl_norms = jnp.trapezoid(F_Q_pl, q_grid, axis=0)
