@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gwpoptools"
-version = "0.1.0"
+dynamic = ["version"]
 dependencies = [
   "numpy>=2.2.4",
   "numpyro>=0.18.0",
