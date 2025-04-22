@@ -2,6 +2,7 @@ import numpyro
 import jax
 import jax.numpy as jnp
 import numpy as np
+from gwpoptools.models import truncatedBrokenPowerLaw
 
 
 def gwpopulationTapering(samples, low, delta):
