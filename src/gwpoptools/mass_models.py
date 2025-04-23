@@ -34,14 +34,14 @@ def gwpopulationTapering(samples, low, delta):
     denom2 = samples-low-delta
     denom1 = np.clip(denom1, a_min=clip, a_max=None)
     denom2 = np.clip(denom2, a_min=None, a_max=-clip)
-    
+
     # Compute tapering
     f = jnp.exp(delta/denom1 + delta/denom2)
     taper = 1./(1 + f)
 
     # Apply bounds
-    taper = jnp.where(samples<low, 0, taper)
-    taper = jnp.where(samples>=low+delta, 1, taper)
+    taper = jnp.where(samples < low, 0, taper)
+    taper = jnp.where(samples >= low+delta, 1, taper)
 
     return taper
 
@@ -67,7 +67,7 @@ def exponentialTapering(samples, onset, dx):
     """
 
     taper = jnp.exp(-(samples-onset)**2/(2*dx**2))
-    taper = jnp.where(samples<onset, taper, 1)
+    taper = jnp.where(samples < onset, taper, 1)
     return taper
 
 
@@ -211,7 +211,7 @@ def primaryMassModel_brokenPL_twoPeaks(
     # Form full mixture and return
     f_m1 = ((1-f_peak1-f_peak2)*p_bpl + f_peak1*p_m1_peak1 + f_peak2*p_m1_peak2)*taper*taperHigh
     return f_m1
-    
+
 
 def massRatioModel_taperedPowerLaw(q, m1, beta, m2_low, delta_m2):
 
@@ -354,11 +354,11 @@ def primaryMassModel_brokenPL_twoPeaks_independentBetas(
         f_q_pl_norms = jnp.trapezoid(F_Q_pl, q_grid, axis=0)
 
         cached_normalization_data = {
-            'm_grid':m_grid,
-            'q_grid':q_grid,
-            'f_q_peak1_norms':f_q_peak1_norms,
-            'f_q_peak2_norms':f_q_peak2_norms,
-            'f_q_pl_norms':f_q_pl_norms}
+            'm_grid': m_grid,
+            'q_grid': q_grid,
+            'f_q_peak1_norms': f_q_peak1_norms,
+            'f_q_peak2_norms': f_q_peak2_norms,
+            'f_q_pl_norms': f_q_pl_norms}
 
     p_q_peak1 /= jnp.interp(jnp.log10(m1), jnp.log10(cached_normalization_data['m_grid']), cached_normalization_data['f_q_peak1_norms'])
     p_q_peak2 /= jnp.interp(jnp.log10(m1), jnp.log10(cached_normalization_data['m_grid']), cached_normalization_data['f_q_peak2_norms'])
@@ -379,4 +379,3 @@ def primaryMassModel_brokenPL_twoPeaks_independentBetas(
 
     else:
         return f_m1
-
