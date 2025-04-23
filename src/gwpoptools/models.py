@@ -7,7 +7,7 @@ def truncatedNormal(samples, mu, sigma, lowCutoff, highCutoff):
 
     """
     Jax-enabled truncated normal distribution
-    
+
     Parameters
     ----------
     samples : `jax.numpy.array` or float
@@ -33,8 +33,8 @@ def truncatedNormal(samples, mu, sigma, lowCutoff, highCutoff):
     ps = jnp.exp(-(samples-mu)**2/(2.*sigma**2))/norm
 
     # Truncate
-    ps = jnp.where(samples<lowCutoff, 0, ps)
-    ps = jnp.where(samples>highCutoff, 0, ps)
+    ps = jnp.where(samples < lowCutoff, 0, ps)
+    ps = jnp.where(samples > highCutoff, 0, ps)
 
     return ps
 
@@ -62,8 +62,8 @@ def truncatedPowerLaw(samples, beta, minValue, maxValue):
     """
 
     ps = (1.+beta)*samples**beta/(maxValue**(1.+beta)-minValue**(1.+beta))
-    ps = jnp.where(samples>maxValue, 0, ps)
-    ps = jnp.where(samples<minValue, 0, ps)
+    ps = jnp.where(samples > maxValue, 0, ps)
+    ps = jnp.where(samples < minValue, 0, ps)
 
     return ps
 
@@ -95,14 +95,14 @@ def truncatedBrokenPowerLaw(samples, alpha1, alpha2, minValue, break_location, m
     """
 
     # Compute piecewise cases
-    p_broken_pl = jnp.where(samples<break_location, (samples/break_location)**alpha1, (samples/break_location)**alpha2)
-    p_broken_pl = jnp.where(samples<minValue, 0, p_broken_pl)
+    p_broken_pl = jnp.where(samples < break_location, (samples/break_location)**alpha1, (samples/break_location)**alpha2)
+    p_broken_pl = jnp.where(samples < minValue, 0, p_broken_pl)
 
     # Normalization constant
     if maxValue:
         normalization = (break_location**(1.+alpha1)-minValue**(1.+alpha1))/break_location**alpha1/(1.+alpha1) \
             + (maxValue**(1.+alpha2) - break_location**(1.+alpha2))/break_location**alpha2/(1.+alpha2)
-        p_broken_pl = jnp.where(samples>maxValue, 0, p_broken_pl)
+        p_broken_pl = jnp.where(samples > maxValue, 0, p_broken_pl)
     else:
         normalization = (break_location**(1.+alpha1)-minValue**(1.+alpha1))/break_location**alpha1/(1.+alpha1) \
             + (- break_location**(1.+alpha2))/break_location**alpha2/(1.+alpha2)
@@ -112,3 +112,29 @@ def truncatedBrokenPowerLaw(samples, alpha1, alpha2, minValue, break_location, m
     return p_broken_pl
 
 
+def sigmoid(xs, ymin, ymax, xc, dx):
+
+    """
+    Function defining a sigmoid.
+
+    Parameters
+    ----------
+    xs : `array`
+        Array of values at which to evaluate sigmoid
+    ymin : `float`
+        Min value as `xs` approaches negative infinity
+    ymax : `float`
+        Max value as `xs` approaches infinity
+    xc : `float`
+        Central value about which the transition occurs
+    dx : `float`
+        Scale width of the transition
+
+    Returns
+    -------
+    sigmoid_vals : `array`
+        Array of sigmoid values
+    """
+
+    sigmoid_vals = ymin + (ymax-ymin)/(1. + jnp.exp(-(xs-xc)/dx))
+    return sigmoid_vals
