@@ -44,6 +44,38 @@ def monteCarloIntegralAndDiagnostics(weights, n):
     return mean, n_effective, variance
 
 
+def logit_transform(x, x_min, x_max):
+
+    """
+    Transform bounded data to an unbounded domain using a logit transform
+    and compute the Jacobian of the transformation.
+    
+    Parameters
+    ----------
+    x : jnp.ndarray
+        Input data in the range [xmin, xmax].
+    xmin : float
+        Minimum value of the bounded domain.
+    xmax : float
+        Maximum value of the bounded domain.
+        
+    Returns
+    -------
+    logit_x : jnp.ndarray
+        Transformed data in the unbounded domain
+    jacobian : jnp.ndarray
+        Jacobian of the transformation, d(logit x)/dx
+    """
+
+    # Compute logit
+    logit_x = jnp.log((x-x_min) / (x_max - x))
+    
+    # Compute the Jacobian
+    dlogit_dx = 1./(x-x_min) + 1./(x_max-x)
+
+    return logit_x, dlogit_dx
+
+
 def get_value_from_logit(logit_x, x_min, x_max):
 
     """
