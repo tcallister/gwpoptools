@@ -106,7 +106,7 @@ def get_value_from_logit(logit_x, x_min, x_max):
     return x, dlogit_dx
 
 
-def sampleUniformFromLogit(name, minValue, maxValue, logit_std=logit_std):
+def sampleUniformFromLogit(name, minValue, maxValue, logit_std=logit_std, sample_shape=()):
 
     """
     Function to sample a uniform bounded prior via an unbounded prior in a transformed
@@ -133,7 +133,7 @@ def sampleUniformFromLogit(name, minValue, maxValue, logit_std=logit_std):
 
     # Draw from unconstrained logit space
     logit_param = numpyro.sample("logit_"+name,
-        numpyro.distributions.Normal(0, logit_std))
+        numpyro.distributions.Normal(0, logit_std), sample_shape=sample_shape)
 
     # Transform to physical value and get Jacobian
     param, jacobian = get_value_from_logit(logit_param, minValue, maxValue)
