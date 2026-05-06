@@ -1,17 +1,30 @@
 # contents of pyproject.toml
 [build-system]
-requires = ["hatchling", "versioningit"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
 name = "gwpoptools"
 dynamic = ["version"]
+description = "Reusable tools for gravitational-wave population inference"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+  { name = "Tom Callister", email = "thomas.a.callister@gmail.com" },
+]
 dependencies = [
   "numpy>=2.2.4",
   "numpyro>=0.18.0",
   "scipy>=1.15.2",
   "jax>=0.5.3",
 ]
+
+[tool.hatch.version]
+path = "src/gwpoptools/__init__.py"
+
+[project.urls]
+"Source" = "https://github.com/tcallister/gwpoptools"
 
 # Following https://learn.scientific-python.org/development/guides/pytest/
 [tool.pytest.ini_options]
@@ -23,12 +36,3 @@ log_cli_level = "info"
 testpaths = [
   "tests",
 ]
-
-[tool.hatch.version]
-source = "versioningit"
-default-version = "0.0.0+unknown"
-
-[tool.hatch.version.format]
-distance = "{next_version}.dev{distance}+{vcs}{rev}"
-dirty = "{version}+dirty"
-distance-dirty = "{next_version}.dev{distance}+{vcs}{rev}.dirty"
