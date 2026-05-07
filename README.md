@@ -1,2 +1,2 @@
-# gw-pop-tools
-Frequently used code for GW population inference
+# gwpoptools
+Frequently used code for GW population inference.
