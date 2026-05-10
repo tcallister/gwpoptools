@@ -9,7 +9,7 @@ dynamic = ["version"]
 description = "Reusable tools for gravitational-wave population inference"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
   { name = "Tom Callister", email = "thomas.a.callister@gmail.com" },
 ]
