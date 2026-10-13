@@ -185,3 +185,48 @@ def sampleUniformFromLogit(name, minValue, maxValue, logit_std=logit_std, sample
     
     return param
 
+
+def build_interpolation_map(x_grid, x_query):
+
+    """
+    Helper fuction to turn linear interpolation into a matrix operation.
+    Specifically, computes a matrix of weights that can be applied to function values
+    f(x) defined over a grid, in order to interpolate appropriate values of f(x_query).
+
+    Parameters
+    ----------
+    x_grid : `array`
+        Array of grid points to serve as interpolation reference.
+        Must be strictly increasing. Size (m,)
+    x_query : `array`
+        Array of points at which we want to interpolate f(x). Must be one-dimensional.
+        Size (n,)
+
+    Returns
+    -------
+    interpolation_weights : `array`
+        (n, m) array that, when multiplied by f(x), yields linearly interpolated values
+    """
+
+    # Complain if insertion points are outside the grid
+    if np.any(x_query < x_grid[0]) or np.any(x_query > x_grid[-1]):
+        raise ValueError(f"Query points lie outside the grid!")
+
+    # Find where every queried sample sits inside x_grid
+    # The bizarre logic is to deal with the special case of a query point sitting directly
+    # on the lowest grid point. In this case, we ensure that `index_below = 0` and
+    # `index_above = 1`
+    index_below = np.maximum(np.searchsorted(x_grid, x_query, side='left') - 1, 0)
+    index_above = index_below + 1
+
+    # Calculate fractional positions of query points in their respective intervals
+    ws = (x_query - x_grid[index_below])/(x_grid[index_above] - x_grid[index_below])
+
+    # Assign fractional linearized weights to grid values immediately before and after insertion points
+    interpolation_weights = np.zeros((x_query.size, x_grid.size))
+    interpolation_weights[np.arange(x_query.size), index_below] = 1. - ws
+    interpolation_weights[np.arange(x_query.size), index_above] = ws
+
+    return interpolation_weights
+
+

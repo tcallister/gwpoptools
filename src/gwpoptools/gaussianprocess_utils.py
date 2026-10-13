@@ -76,7 +76,7 @@ def compute_gp_prior_params(dPsi_max, dPsi_event, deltaX, N_events):
     """
 
     # Compute the 99th percentile of a chi-squared distribution
-    q_99 = scipy.special.gammaincinv(1/2, 0.99)
+    q_99 = scipy.stats.chi2.ppf(0.99, 1)
 
     # Compute standard deviation on `sigma` prior
     Sigma_sig = dPsi_max/(2.*q_99**0.5*scipy.special.erfinv(0.99))
