@@ -1,4 +1,5 @@
 import numpyro
+import jax
 import jax.numpy as jnp
 import numpy as np
 
@@ -40,6 +41,46 @@ def monteCarloIntegralAndDiagnostics(weights, n):
 
     # Variance
     variance = sum_weights_squared/n**2 - mean**2/n
+
+    return mean, n_effective, variance
+
+
+def perEventMonteCarloIntegralAndDiagnostics(weights, event_ids, n_per_event):
+
+    """
+    Monte Carlo mean and diagnostics computed separately for each event's PE
+    samples, allowing events to have different numbers of samples.
+
+    Parameters
+    ----------
+    weights : jnp.ndarray
+        Flat array of Monte Carlo weights, shape (N_total,)
+    event_ids : jnp.ndarray
+        Integer event label for each weight, sorted ascending, shape (N_total,)
+    n_per_event : jnp.ndarray
+        Number of weights for each event, shape (N_events,)
+
+    Returns
+    -------
+    mean : jnp.ndarray
+        Estimated mean for each event
+    n_effective : jnp.ndarray
+        Effective number of samples for each event
+    variance : jnp.ndarray
+        Variance on each mean
+    """
+
+    # Do sums once, within each event
+    n_events = n_per_event.size
+    sum_weights = jax.ops.segment_sum(weights, event_ids,
+                                      num_segments=n_events, indices_are_sorted=True)
+    sum_weights_squared = jax.ops.segment_sum(weights**2, event_ids,
+                                              num_segments=n_events, indices_are_sorted=True)
+
+    # Same estimators as monteCarloIntegralAndDiagnostics, per event
+    mean = sum_weights/n_per_event
+    n_effective = sum_weights**2/sum_weights_squared
+    variance = sum_weights_squared/n_per_event**2 - mean**2/n_per_event
 
     return mean, n_effective, variance
 
